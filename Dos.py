@@ -16,11 +16,11 @@ def print_banner():
     print("-------------------------------------------")
     print("            _____    ____      ____        ")
     print("              |     |    |    |    |   |   ")
-    print("(dot)(dot)    |     |    |    |    |   |   ")
+    print("(dot)(dot) |     |    |    |    |   |   ")
     print("  O    O      |     |____|    |____|   |___")
     print("-------------------------------------------")
     print("First installation in the dot dot series")
-    print("Made by: EUMonk")
+    print("Made by: EUMonk - Python")
     print("-------------------------------------------")
     print("\n")
 
