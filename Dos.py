@@ -6,6 +6,7 @@ import os
 
 # Define the password required to access the main menu
 PASSWORD = "man2314"
+PASSWORD = "callumthegamer3d"
 
 def clear_screen():
     """Clears the console screen."""
