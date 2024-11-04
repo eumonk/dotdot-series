@@ -7,6 +7,23 @@ import os
 # Define the password required to access the main menu
 PASSWORD = "man2314"
 
+def clear_screen():
+    """Clears the console screen."""
+    os.system("cls" if os.name == "nt" else "clear")
+
+def print_banner():
+    """Prints a banner for the application."""
+    print("-------------------------------------------")
+    print("            _____    ____      ____        ")
+    print("              |     |    |    |    |   |   ")
+    print("(dot)(dot)    |     |    |    |    |   |   ")
+    print("  O    O      |     |____|    |____|   |___")
+    print("-------------------------------------------")
+    print("First installation in the dot dot series")
+    print("Made by: EUMonk")
+    print("-------------------------------------------")
+    print("\n")
+
 def get_ping(ip, port):
     """Calculate the ping to the specified IP and port."""
     try:
@@ -55,19 +72,8 @@ def attack_menu():
 
     # Clear screen
     time.sleep(2)
-    os.system("cls" if os.name == "nt" else "clear")
-
-    print("-------------------------------------------")
-    print("            _____    ____      ____        ")
-    print("              |     |    |    |    |   |   ")
-    print("(dot)(dot)    |     |    |    |    |   |   ")
-    print("  O    O      |     |____|    |____|   |___")
-    print("-------------------------------------------")
-    print("first installation in the dot dot series")
-    print("made by: EUMonk")
-    print("-------------------------------------------")
-    
-    time.sleep(2)
+    clear_screen()
+    print_banner()
     
     # Start DoS attack threads
     for _ in range(thread_count):
@@ -75,28 +81,33 @@ def attack_menu():
         attack_thread.start()
 
 def main():
+    clear_screen()
+    print_banner()
+
     print("Welcome to the dot dot series")
-    print("Please enter the password to proceed:")
-    password = input("Password: ")
     
-    # Check if the entered password matches the required password
-    if password == PASSWORD:
-        print("Access granted.")
-        while True:
-            print("\nSelect an option:")
-            print("1) DoS Attack")
-            print("2) Exit")
-            choice = input("Enter your choice: ")
-            
-            if choice == "1":
-                attack_menu()
-            elif choice == "2":
-                print("Exiting the program.")
-                break
-            else:
-                print("Invalid option. Please try again.")
-    else:
-        print("Access denied. Exiting program.")
+    # Loop until the correct password is entered
+    while True:
+        password = input("Please enter the password to proceed: ")
+        if password == PASSWORD:
+            print("Access granted.")
+            break
+        else:
+            print("Access denied. Please try again.")
+
+    while True:
+        print("\nSelect an option:")
+        print("1) DoS Attack")
+        print("2) Exit")
+        choice = input("Enter your choice: ")
+        
+        if choice == "1":
+            attack_menu()
+        elif choice == "2":
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid option. Please try again.")
 
 if __name__ == "__main__":
     main()
